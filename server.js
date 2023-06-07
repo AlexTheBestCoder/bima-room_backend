@@ -8,11 +8,11 @@ const BlogRoutes = require('./routes/Blog.Routes')
 const UserRoutes = require('./routes/User.Routes')
 
 app.use(cors({
-  origin: ['https://bima-room-frontend.vercel.app', 'http://localhost:3000'], // Remplacez par l'URL de votre frontend
+  origin: 'https://bima-room-frontend.vercel.app', // Remplacez par l'URL de votre frontend
   credentials: true
 }));
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', ['https://bima-room-frontend.vercel.app', 'http://localhost:3000']); // Remplacez par l'URL de votre frontend
+  res.setHeader('Access-Control-Allow-Origin', 'https://bima-room-frontend.vercel.app'); // Remplacez par l'URL de votre frontend
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization,');

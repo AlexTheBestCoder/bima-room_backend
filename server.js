@@ -9,11 +9,19 @@ const UserRoutes = require('./routes/User.Routes')
 require('dotenv').config()
 
 app.use(cors({
+<<<<<<< HEAD
   origin: 'http://localhost:3000', // Remplacez par l'URL de votre frontend
   credentials: true
 }));
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // Remplacez par l'URL de votre frontend
+=======
+  origin: 'https://bima-room.vercel.app', // Remplacez par l'URL de votre frontend
+  credentials: true
+}));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://bima-room.vercel.app'); // Remplacez par l'URL de votre frontend
+>>>>>>> 77c69c1577ae9465ac6b061f21b2ed8481d40e57
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization,');

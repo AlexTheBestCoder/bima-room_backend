@@ -154,62 +154,71 @@ app.get("/api/cart/:cartId", async (req, res) => {
   }
 });
 
-// Mise à jour de la quantité d'un produit dans le panier
-app.put("/api/cart/:productId", async (req, res) => {
-  const { productId } = req.params;
-  const { quantity } = req.body;
-  const { userId } = req;
-
+// Méthode de modification de la quantité d'un élément dans le panier
+app.put("/api/cart/:cartId/:itemId", async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId });
-    const productIndex = cart.products.findIndex((product) =>
-      product.productId.equals(productId)
-    );
+    const cartId = req.params.cartId; // Récupérer l'identifiant du panier depuis les paramètres de la requête
+    const itemId = req.params.itemId; // Récupérer l'identifiant de l'élément depuis les paramètres de la requête
+    const { quantity } = req.body; // Récupérer la nouvelle quantité depuis le corps de la requête
 
-    if (productIndex !== -1) {
-      cart.products[productIndex].quantity = quantity;
-      await cart.save();
-      res.status(200).json(cart);
-    } else {
-      res.status(404).json({ message: "Produit non trouvé dans le panier." });
+    // Recherchez le panier correspondant à l'identifiant
+    const cart = await Cart.findOne({ cartId });
+
+    if (!cart) {
+      return res.status(404).json({ error: "Panier introuvable" });
     }
+
+    // Recherchez l'élément dans le panier
+    const item = cart.items.find((item) => item._id.toString() === itemId);
+
+    if (!item) {
+      return res.status(404).json({ error: "Élément introuvable" });
+    }
+
+    // Mettez à jour la quantité de l'élément
+    item.quantity = quantity;
+
+    // Sauvegardez le panier mis à jour dans la base de données
+    await cart.save();
+
+    res.status(200).json(cart);
   } catch (error) {
-    console.error("Erreur lors de la mise à jour du panier :", error);
-    res.status(500).json({
-      message: "Une erreur est survenue lors de la mise à jour du panier.",
-    });
+    res.status(500).json({ error: error.message });
   }
 });
 
-// Suppression d'un produit du panier
-app.delete("/api/cart/:productId", async (req, res) => {
-  const { productId } = req.params;
-  const { userId } = req;
-
+// Méthode de suppression d'un élément du panier
+app.delete("/api/cart/:cartId/:itemId", async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId });
-    const productIndex = cart.products.findIndex((product) =>
-      product.productId.equals(productId)
-    );
+    const cartId = req.params.cartId; // Récupérer l'identifiant du panier depuis les paramètres de la requête
+    const itemId = req.params.itemId; // Récupérer l'identifiant de l'élément depuis les paramètres de la requête
 
-    if (productIndex !== -1) {
-      cart.products.splice(productIndex, 1);
-      await cart.save();
-      res.status(200).json(cart);
-    } else {
-      res.status(404).json({ message: "Produit non trouvé dans le panier." });
+    // Recherchez le panier correspondant à l'identifiant
+    const cart = await Cart.findOne({ cartId });
+
+    if (!cart) {
+      return res.status(404).json({ error: "Panier introuvable" });
     }
+
+    // Recherchez l'indice de l'élément dans le panier
+    const itemIndex = cart.items.findIndex((item) => item._id.toString() === itemId);
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ error: "Élément introuvable" });
+    }
+
+    // Supprimez l'élément du panier
+    cart.items.splice(itemIndex, 1);
+
+    // Sauvegardez le panier mis à jour dans la base de données
+    await cart.save();
+
+    res.status(200).json(cart);
   } catch (error) {
-    console.error(
-      "Erreur lors de la suppression du produit du panier :",
-      error
-    );
-    res.status(500).json({
-      message:
-        "Une erreur est survenue lors de la suppression du produit du panier.",
-    });
+    res.status(500).json({ error: error.message });
   }
 });
+
 
 // Démarrez votre serveur
 app.listen(PORT, () => {

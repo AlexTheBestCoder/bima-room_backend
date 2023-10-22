@@ -64,6 +64,10 @@ const mg = mailgun({
   domain: DOMAIN_NAME,
 });
 
+app.head("/", (req, res) => {
+  res.status(200).end();
+});
+
 app.post("/api/contact", (req, res) => {
   const { firstName, lastName, email, subject, message } = req.body;
 
